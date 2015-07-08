@@ -43,8 +43,9 @@ IMG=`mktemp tmpXXX.img`
 qemu-img create -f qcow2 -b $TMPL $IMG
 
 # start the VM & bind port 2222 on the host to port 22 in the VM
-numactl $numaopts kvm -net nic -net user -hda $IMG -hdb $LIBDIR/seed.img -m 4G -smp $numsmp -nographic -redir :2222::22 >$IMG.log &
+#numactl $numaopts kvm -net nic -net user -hda $IMG -hdb $LIBDIR/seed.img -m 4G -smp $numsmp -nographic -redir :2222::22 >$IMG.log &
 #numactl $numaopts kvm -net nic -net user -hda $IMG -hdb $LIBDIR/seed.img -m 4G -smp $numsmp -nographic -redir :2222::22 
+sudo kvm -net nic -net user -hda $IMG -hdb $LIBDIR/seed.img -m 4G -smp $numsmp -nographic -redir :2222::22 >$IMG.log &
 
 # remove the overlay (qemu will keep it open as needed)
 sleep 5

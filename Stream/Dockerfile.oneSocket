@@ -41,4 +41,5 @@ RUN apt-get -y install libgomp1 numactl
 
 RUN apt-get install -y libgomp1 numactl
 ADD ./bin /
-CMD numactl --physcpubind=0 --localalloc /stream.exe
+#CMD numactl --physcpubind=0 --localalloc /stream.exe
+CMD  /stream.exe

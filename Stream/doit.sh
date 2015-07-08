@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm results/* -rf
+
 # numsockets=2
 
 # for ((i=0;i<10;i++)); do ./linux.sh $numsockets; done
