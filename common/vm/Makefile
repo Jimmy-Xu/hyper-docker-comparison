@@ -1,6 +1,7 @@
 # see http://ubuntu-smoser.blogspot.co.uk/2013/02/using-ubuntu-cloud-images-without-cloud.html
 
-all: ubuntu-13.10-server-cloudimg-amd64-disk1.img seed.img play.img
+#all: ubuntu-13.10-server-cloudimg-amd64-disk1.img seed.img play.img
+all: ubuntu-14.04-server-cloudimg-amd64-disk1.img seed.img play-trusty.img
 
 # download a clean VM image
 ubuntu-13.10-server-cloudimg-amd64-disk1.img: 

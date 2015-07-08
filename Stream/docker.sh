@@ -24,8 +24,8 @@ fi
 make
 
 # build the container 
-docker rm stream:latest
-docker build -t stream --no-cache=true --rm=true .
+#docker rmi stream:latest
+docker build -t stream .
 
 mkdir -p results
 log="results/docker.log"
@@ -34,6 +34,6 @@ echo "Running stream, started at $now"
 echo "--------------------------------------------------------------------------------" >> $log
 echo "Running stream, started at $now" >> $log
 docker run --rm stream >> $log
-docker rm stream:latest
+#docker rmi stream:latest
 echo "" >> $log
 echo -n "Experiment completed at "; date

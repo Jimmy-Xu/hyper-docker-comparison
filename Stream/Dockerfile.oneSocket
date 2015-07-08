@@ -30,6 +30,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y clean && \
     apt-get -y update
 
+RUN apt-get install -y software-properties-common
+RUN apt-get install -y python-software-properties
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
+RUN apt-get -y update
+RUN apt-get -y install gcc-4.9 g++-4.9
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
+RUN apt-get -y install git make automake libc6-dev libtool dos2unix
+RUN apt-get -y install libgomp1 numactl
+
 RUN apt-get install -y libgomp1 numactl
-ADD bin /
-CMD numactl --physcpubind=0,1 --localalloc /stream.exe
+ADD ./bin /
+CMD numactl --physcpubind=0 --localalloc /stream.exe
