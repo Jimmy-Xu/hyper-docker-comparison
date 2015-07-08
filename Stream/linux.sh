@@ -8,7 +8,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 if [ "$1" -eq 1 ]; then
-    numaopts=" --physcpubind=0,1 --localalloc "
+    numaopts=" --physcpubind=0 --localalloc "
     echo "Running on one socket with numactl $numaopts"
 elif [ "$1" -eq 2 ]; then
     numaopts=" --physcpubind=0-1 --interleave=0,1 "

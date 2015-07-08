@@ -33,7 +33,7 @@ now=`date`
 echo "Running stream, started at $now"
 echo "--------------------------------------------------------------------------------" >> $log
 echo "Running stream, started at $now" >> $log
-docker run --rm stream >> $log
+docker run --memory=4096m --cpuset-cpus=0 --rm stream >> $log
 #docker rmi stream:latest
 echo "" >> $log
 echo -n "Experiment completed at "; date
