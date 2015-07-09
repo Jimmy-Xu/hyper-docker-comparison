@@ -1,8 +1,8 @@
 # see http://ubuntu-smoser.blogspot.co.uk/2013/02/using-ubuntu-cloud-images-without-cloud.html
 # see http://cloud-images.ubuntu.com/releases
 
-#all: id_rsa cloud-localds ubuntu-13.10-server-cloudimg-amd64-disk1.img seed.img play.img
-all: id_rsa cloud-localds ubuntu-14.04-server-cloudimg-amd64-disk1.img seed.img play-trusty.img
+#all: id_rsa cloud-localds cirros ubuntu-13.10-server-cloudimg-amd64-disk1.img seed.img play.img
+all: id_rsa cloud-localds cirros ubuntu-14.04-server-cloudimg-amd64-disk1.img seed.img play-trusty.img
 
 # download a clean VM image
 ubuntu-13.10-server-cloudimg-amd64-disk1.img:
@@ -35,6 +35,9 @@ cloud-localds:
 
 id_rsa:
 	chmod 400 ../id_rsa
+
+cirros:
+	wget -c http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
 
 clean:
 	rm *.img
