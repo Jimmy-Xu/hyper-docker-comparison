@@ -91,10 +91,10 @@ wait
 
 if [ -f vm.img ];then
   echo "rm tmp image $IMG"
-  rm $IMG -rf
+  sudo rm $IMG -rf
 else
  echo "keep vm.img"
-  mv $IMG vm.img
+  sudo mv $IMG vm.img
 fi
 
 
