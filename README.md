@@ -253,20 +253,22 @@ do
 done
 
 
-> QEMU process memory usage(MiB): ( 230 qemu process )
+> QEMU process memory usage(MiB): ( 252 qemu process )
 |  -  | min | max | avg |
 | --- | --- | --- | --- |
-|RSS(VmRSS) |    61 |    75 |    71 |
+|RSS(VmRSS) |    61 |    75 |    69 |
 |VSZ(VmSize)|   994 |  1066 |   995 |
 
-
-> memory usage in container (MiB): ( 230 running container )
+> memory usage in container (MiB): ( 252 running container )
 |  -  | min | max | avg |
 | --- | --- | --- | --- |
 |Total|   498 |   498 |   498 |
 |Used |    14 |    14 |    14 |
-|Free |   483 |   484 |   484 |
+|Free |   484 |   484 |   484 |
+
+16GB => 251 hyper pod
 
 
-
+$ sudo hyper pod hyper-stream.pod
+hyper ERROR: An error occurred trying to connect: Post http:///var/run/hyper.sock/v0.2.1/pod/run?podArgs=%7B%0A++%22tty%22%3A+true%2C%0A++%22volumes%22%3A+%5B%5D%2C%0A++%22files%22%3A+%5B%5D%2C%0A++%22resource%22%3A+%7B%0A++++%22memory%22%3A+512%2C%0A++++%22vcpu%22%3A+1%0A++%7D%2C%0A++%22containers%22%3A+%5B%0A++++%7B%0A++++++%22command%22%3A+%5B%0A++++++++%22%2Fbin%2Fbash%22%0A++++++%5D%2C%0A++++++%22workdir%22%3A+%22%2F%22%2C%0A++++++%22image%22%3A+%22hyper%3Astream%22%2C%0A++++++%22name%22%3A+%22hyper-stream%22%0A++++%7D%0A++%5D%2C%0A++%22id%22%3A+%22hyper-stream%22%0A%7D%0A%0A: EOF
 

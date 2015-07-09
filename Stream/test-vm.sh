@@ -1,5 +1,5 @@
 rm tmp* -rf
-for i in `seq 101 107`
+for i in `seq 1 107`
 do
 	IMG=`mktemp tmpXXX.img`
 	echo "create vm($IMG):"$i
