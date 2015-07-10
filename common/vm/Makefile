@@ -30,7 +30,7 @@ cloud-localds:
 		wget -c https://launchpad.net/cloud-utils/trunk/0.27/+download/cloud-utils-0.27.tar.gz;\
 		tar xzvf cloud-utils-0.27.tar.gz;\
 		sudo cp cloud-utils-0.27/bin/cloud-localds /usr/local/bin;\
-	else\
+	else \
 		echo "cloud-localds already installed";\
 	fi
 
@@ -38,10 +38,18 @@ id_rsa:
 	chmod 400 ../id_rsa
 
 cirros:
-	wget -c http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img
+	if [ ! -f cirros-0.3.3-x86_64-disk.img ];then \
+		wget -c http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img;\
+	else \
+		echo "cirros-0.3.3-x86_64-disk.img already downloaded";\
+	fi
 
 coreos:
-	wget -c  http://stable.release.core-os.net/amd64-usr/current/coreos_production_qemu_image.img.bz2 -O - | bzcat > coreos_production_qemu_image.img
+	if [ ! -f coreos_production_qemu_image.img ];then \
+		wget -c  http://stable.release.core-os.net/amd64-usr/current/coreos_production_qemu_image.img.bz2 -O - | bzcat > coreos_production_qemu_image.img;\
+	else \
+		echo "coreos_production_qemu_image.img already downloaded";\
+	fi
 
 
 clean:
