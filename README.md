@@ -41,12 +41,19 @@ ll vm.img
 	Add:           13.8488       0.0727       0.0727       0.0728
 	Triad:         13.8645       0.0727       0.0726       0.0727
 
+	Function      Rate (GB/s)   Avg time     Min time     Max time
+	Copy:          12.7826       0.0526       0.0525       0.0526
+	Scale:         12.7004       0.0529       0.0528       0.0529
+	Add:           13.0990       0.0773       0.0768       0.0808
+	Triad:         13.0304       0.0773       0.0773       0.0774
+
+
 
 ######################################################
 # manual operate docker
 ######################################################
 
-1) docker run --memory=4096m --cpuset-cpus=0 --rm stream:latest 
+1) docker run --memory=4096m --cpuset-cpus=0 --rm stream:latest /stream.exe
 	Function      Rate (GB/s)   Avg time     Min time     Max time
 	Copy:          11.8316       0.0572       0.0567       0.0606
 	Scale:         13.6289       0.0493       0.0492       0.0494
@@ -66,6 +73,13 @@ ll vm.img
 	Scale:         13.6292       0.0493       0.0492       0.0494
 	Add:           13.8300       0.0729       0.0728       0.0729
 	Triad:         13.8334       0.0733       0.0728       0.0768
+
+	Function      Rate (GB/s)   Avg time     Min time     Max time
+	Copy:          12.6673       0.0530       0.0530       0.0531
+	Scale:         12.6237       0.0537       0.0532       0.0571
+	Add:           12.9774       0.0776       0.0776       0.0777
+	Triad:         12.8701       0.0787       0.0782       0.0822
+
 
 4) numactl --physcpubind=0 --localalloc docker run --memory=4096m --cpuset-cpus=0 --rm stream:latest bash -c "numactl --physcpubind=0 --localalloc /stream.exe"
 	Function      Rate (GB/s)   Avg time     Min time     Max time
@@ -107,6 +121,17 @@ sudo numactl --physcpubind=0 --localalloc hyper run --cpu=1 --memory=4096 stream
 	Add:           15.7193       0.0642       0.0640       0.0646
 	Triad:         15.7407       0.0643       0.0640       0.0645
 
+
+## test min bootable startup mem
+sudo hyper run --cpu=1 --memory=28 ubuntu  top -b -n1
+	POD id is pod-PdDPRppTte
+	top - 09:07:48 up 0 min,  0 users,  load average: 0.00, 0.00, 0.00
+	Tasks:   2 total,   1 running,   1 sleeping,   0 stopped,   0 zombie
+	%Cpu(s):  0.0 us, 31.0 sy,  0.0 ni, 69.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+	KiB Mem:     19520 total,    11628 used,     7892 free,        0 buffers
+	KiB Swap:        0 total,        0 used,        0 free.     4580 cached Mem
+
+
 ######################################################
 # manual operate VM
 ######################################################
@@ -114,22 +139,51 @@ sudo numactl --physcpubind=0 --localalloc hyper run --cpu=1 --memory=4096 stream
 cd Stream
 
 ## run VM
-cp vm.img vm-test.img; sudo kvm -net nic -net user -hda vm-test.img -hdb ../common/vm/seed.img -m 4G -smp 1 -nographic -redir :2222::22
+PORT=2201
+cp vm.img vm-test.img; sudo kvm -net nic -net user -hda vm-test.img -hdb ../common/vm/seed.img -m 4G -smp 1 -nographic -redir :${PORT}::22
 
 ## ssh options
-SSHOPTS="-p2222 -i ../common/id_rsa -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oConnectionAttempts=60"
+SSHOPTS=" -i ../common/id_rsa -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oConnectionAttempts=60"
 
 ## copy file to VM
-rsync -a -e "ssh $SSHOPTS" ./bin/ spyre@localhost:~
+rsync -a -e "ssh -p${PORT} $SSHOPTS" ./bin/ spyre@localhost:~
 
 ## ssh to VM
-ssh $SSHOPTS spyre@localhost
+ssh -p${PORT} $SSHOPTS spyre@localhost
 
 ## run test
 numactl --physcpubind=0 --localalloc ./stream.exe
 
 ## shut down the VM
 ssh $SSHOPTS spyre@localhost sudo shutdown -h now
+
+----------------------------------------------------------
+
+## test min bootable startup mem
+
+SSHOPTS=" -i ../common/id_rsa -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oConnectionAttempts=60" 
+PORT=2202; 
+
+#cp ../common/vm/ubuntu-14.04-server-cloudimg-amd64-disk1.img vm-min.img; 
+cp ../common/vm/cirros-0.3.3-x86_64-disk.img vm-min.img;
+sudo kvm -net nic -net user -hda vm-min.img -hdb ../common/vm/seed.img -m 60M -smp 1 -nographic -redir :${PORT}::22 
+
+ssh -p${PORT} $SSHOPTS spyre@localhost top -b -n1 | grep "KiB Mem:"
+
+ssh -p${PORT} $SSHOPTS spyre@localhost dmesg -s 131072 > ktime 
+/usr/src/linux-headers-3.13.0-55/scripts/show_delta ktime 
+
+
+##for cirros - passwd: cubswin:)
+ - http://docs.openstack.org/zh_CN/image-guide/content/ch_obtaining_images.html
+
+ssh -p${PORT} $SSHOPTS cirros@localhost "mkdir -p ~/.ssh"
+#rsync -a -e "ssh -p${PORT} " ../common/{authorized_keys,id_rsa,id_rsa.pub} cirros@localhost:~/.ssh
+scp ../common/{authorized_keys,id_rsa,id_rsa.pub} cirros@localhost:${PORT}:~/.ssh
+ssh -p${PORT} $SSHOPTS cirros@localhost "chmod 400 ~/.ssh/{authorized_keys,id_rsa}"
+
+ssh -p${PORT} $SSHOPTS cirros@localhost dmesg
+
 
 -------------------------------------------------------------------
 
@@ -157,6 +211,13 @@ ssh $SSHOPTS spyre@localhost sudo shutdown -h now
 	Scale:         13.6473       0.0501       0.0492       0.0533
 	Add:           13.8654       0.1420       0.0726       0.6968
 	Triad:         13.8653       0.0727       0.0726       0.0729
+
+	Function      Rate (GB/s)   Avg time     Min time     Max time
+	Copy:          12.5552       0.0535       0.0535       0.0536
+	Scale:         12.6590       0.0531       0.0530       0.0531
+	Add:           12.9089       0.0781       0.0780       0.0783
+	Triad:         12.8041       0.0792       0.0786       0.0826
+
 
 2.2) ssh $SSHOPTS spyre@localhost numactl --physcpubind=0 --localalloc ./stream.exe
 	Function      Rate (GB/s)   Avg time     Min time     Max time
@@ -186,12 +247,14 @@ ps -ef | grep qemu | grep -v grep |wc -l
 #------------------------------------
 #bulk check VM
 SSHOPTS=" -i ../common/id_rsa -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oConnectionAttempts=60"
-for i in `seq 1 105`
+PORT_LST=$(sudo netstat -tnopl  | grep qemu | sort | grep 22 | awk '{print $4}' | cut -d":" -f2
+)
+for i in ${PORT_LST}
 do
-	PORT=$((2200+i))
-	echo "PORT:${PORT}"
-	ssh $SSHOPTS spyre@localhost -p${PORT} uptime
+	ssh -p$i $SSHOPTS spyre@localhost bash -c "TERM=xterm;top -b -n1 | grep 'KiB Mem'"
 done
+
+
 
 #------------------------------------
 #bulk shutdown VM
@@ -203,6 +266,8 @@ do
 	ssh $SSHOPTS spyre@localhost -p${PORT} sudo shutdown -h now
 	sleep 1
 done
+
+
 
 
 -- result ---------------------------------------------
@@ -219,6 +284,13 @@ sudo kvm -net nic -net user -hda tmpYCR.img -hdb ../common/vm/seed.img -m 512M -
 | --- | --- | --- | --- |
 |RSS(VmRSS) |    70 |   184 |   156 |
 |VSZ(VmSize)|   928 |   928 |   928 |
+
+> memory usage in container (MiB): ( 105 running container )
+|  -  | min | max | avg |
+| --- | --- | --- | --- |
+|Total|   490 |   490 |   490 |
+|Used |    343 |    343 |    343 |
+|Free |   146 |   146 |   146 |
 
 create vm(tmp3vy.img):106
 Cannot set up guest memory 'pc.ram': Cannot allocate memory
