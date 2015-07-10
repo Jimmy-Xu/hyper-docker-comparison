@@ -39,7 +39,6 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /
 RUN apt-get -y install git make automake libc6-dev libtool dos2unix
 RUN apt-get -y install libgomp1 numactl
 
-RUN apt-get install -y libgomp1 numactl
 ADD ./bin /
 #CMD numactl --physcpubind=0 --localalloc /stream.exe
 CMD  /stream.exe
