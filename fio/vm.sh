@@ -7,6 +7,7 @@ LIBDIR=../common/vm
 SSHOPTS="-p2222 -i ../common/id_rsa -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oConnectionAttempts=60"
 
 MNT_DIR="/mnt/data"
+MNT_DEVICE="/dev/nvme0n1"
 
 # prepare source disk images
 make -C $LIBDIR
@@ -34,7 +35,7 @@ fi
 # start the VM & bind port 2222 on the host to port 22 in the VM
 # TODO use fancy virtio
 sudo kvm -net nic -net user -hda $IMG -hdb $LIBDIR/seed.img \
-    -drive file=/dev/nvme0n1,if=virtio,cache=none,aio=native \
+    -drive file=${MNT_DEVICE},if=virtio,cache=none,aio=native \
     -m 1G -smp 1 -nographic -redir :2222::22 >$IMG.log &
 
 # remove the overlay (qemu will keep it open as needed)
