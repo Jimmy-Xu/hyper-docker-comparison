@@ -29,8 +29,20 @@ qemu-img create -f qcow2 -b $TMPL $IMG
 # unmount ${MNT_DIR} on the host because we're going to mount it inside the VM
 MOUNTED=$(mount | grep /mnt/data | wc -l)
 if [ ${MOUNTED} -ne 0 ];then
+	echo "${MNT_DIR} mounted, unmount first"
 	sudo umount ${MNT_DIR}
+	MOUNTED=$(mount | grep /mnt/data | wc -l)
+	if [ ${MOUNTED} -ne 0 ];then
+		echo "unmount ${MNT_DIR} failed!"
+		exit 1
+	else
+		echo "unmount ${MNT_DIR} succeed!"
+	fi
+else
+	echo "${MNT_DIR} already unmounted"
 fi
+
+
 
 # start the VM & bind port 2222 on the host to port 22 in the VM
 # TODO use fancy virtio

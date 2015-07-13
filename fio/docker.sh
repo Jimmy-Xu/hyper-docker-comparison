@@ -7,7 +7,10 @@ MNT_DEVICE="/dev/nvme0n1"
 # make sure /mnt/data is mounted
 MOUNTED=$(mount | grep /mnt/data | wc -l)
 if [ ${MOUNTED} -eq 0 ];then
+	echo "mount ${MNT_DEVICE} to ${MNT_DIR}"
 	sudo mount ${MNT_DEVICE} ${MNT_DIR}
+else
+	echo "${MNT_DEVICE} already mount to ${MNT_DIR}"
 fi
 
 # build the container (assumes the spyre git repo is in NFS)
