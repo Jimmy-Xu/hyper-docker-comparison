@@ -201,6 +201,16 @@ sudo hyper run --cpu=1 --memory=28 ubuntu  top -b -n1
 	KiB Mem:     19520 total,    11628 used,     7892 free,        0 buffers
 	KiB Swap:        0 total,        0 used,        0 free.     4580 cached Mem
 
+idx=1
+LST=$(sudo hyper list container | grep running | awk '{print $1}')
+for i in $LST
+do
+	echo "idx: $idx"
+	sudo hyper exec $i uptime
+	idx=$((idx+1))
+done
+
+
 
 ######################################################
 # manual operate VM
