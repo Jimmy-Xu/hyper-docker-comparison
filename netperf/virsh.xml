@@ -20,17 +20,17 @@
   <on_reboot>restart</on_reboot>
   <on_crash>destroy</on_crash>
   <devices>
-    <emulator>/usr/bin/kvm-spice</emulator>
+    <emulator>/usr/bin/kvm</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='/power/home/wmf/src/spyre/workloads/netperf/netperf.qcow'/>
+      <source file='/var/lib/libvirt/images/netperf.qcow'/>
       <target dev='vda' bus='virtio'/>
       <alias name='virtio-disk0'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
     </disk>
     <disk type='file' device='disk'>
       <driver name='qemu' type='raw'/>
-      <source file='/power/home/wmf/src/spyre/workloads/common/vm/seed.img'/>
+      <source file='/var/lib/libvirt/images/seed.img'/>
       <target dev='vdb' bus='virtio'/>
       <alias name='virtio-disk1'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
@@ -82,9 +82,9 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
     </memballoon>
   </devices>
-  <seclabel type='dynamic' model='apparmor' relabel='yes'>
+  <!-- <seclabel type='dynamic' model='apparmor' relabel='yes'>
     <label>libvirt-72bfeaf4-ab92-4798-a055-d722b2d3222b</label>
     <imagelabel>libvirt-72bfeaf4-ab92-4798-a055-d722b2d3222b</imagelabel>
-  </seclabel>
+  </seclabel> -->
 </domain>
 

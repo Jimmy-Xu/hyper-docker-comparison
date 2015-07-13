@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SERVER=arldcn24
 CLIENT=arldcn28
@@ -7,17 +7,45 @@ CLIENT=arldcn28
 # you need to be part of the kvm group; try sudo usermod -a -G kvm `whoami`
 
 LIBDIR=../common/vm
+LIBVIRT_IMGDIR=/var/lib/libvirt/images
+
 SSHOPTS="-i ../common/id_rsa -oUserKnownHostsFile=/dev/null -oStrictHostKeyChecking=no -oConnectionAttempts=60"
 VMIP=10.71.1.99
 
 # prepare source disk images
 make -C $LIBDIR
 
+sudo cp $LIBDIR/ubuntu-14.04-server-cloudimg-amd64-disk1.img $LIBVIRT_IMGDIR
+sudo cp $LIBDIR/seed.img $LIBVIRT_IMGDIR
+
 # create ephemeral overlay qcow image
 # (we probably could have used -snapshot)
-IMG='netperf.qcow'
-rm -f $IMG
-qemu-img create -f qcow2 -b $LIBDIR/ubuntu-13.10-server-cloudimg-amd64-disk1.img $IMG
+IMG="${LIBVIRT_IMGDIR}/netperf.qcow"
+if [ -f $IMG ];then
+	rm -f $IMG
+fi
+echo $IMG
+echo sudo qemu-img create -f qcow2 -b $LIBVIRT_IMGDIR/ubuntu-14.04-server-cloudimg-amd64-disk1.img $IMG
+sudo qemu-img create -f qcow2 -b $LIBVIRT_IMGDIR/ubuntu-14.04-server-cloudimg-amd64-disk1.img $IMG
+
+
+# create network spyre
+echo
+NET_SPYRE=$(sudo virsh net-info spyre 2>/dev/null | grep Active | awk '{print $2}')
+if [ -z $NET_SPYRE ];then
+	echo "network spyre not defined, now defining..."
+	sudo virsh net-define net-spyre.xml
+	echo "star network spyre..."
+	sudo virsh net-start spyre
+else
+	if [ "$NET_SPYRE" == "no" ];then
+		echo "network spyre already defined, but not active, now starting..."
+		sudo virsh net-start spyre
+	else
+		echo "network spyre already started"
+	fi
+fi
+echo
 
 # clean out any old VM
 sudo virsh destroy netperf
@@ -27,7 +55,7 @@ sudo virsh create virsh.xml
 
 # remove the overlay (qemu will keep it open as needed)
 sleep 2
-rm -f $IMG
+sudo rm -f $IMG
 
 ssh $SSHOPTS spyre@$VMIP echo hello VM
 date
