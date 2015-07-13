@@ -8,7 +8,7 @@ RUN apt-get -qq install -y fio
 
 ADD test.fio /
 
-VOLUME ["/ferrari"]
+VOLUME ["/mnt/data"]
 ENTRYPOINT ["fio"]
 # CMD [] works around a bug in old versions of Docker
 CMD []

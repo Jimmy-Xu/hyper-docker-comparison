@@ -1,10 +1,10 @@
 [global]
 ioengine=libaio
 direct=1
-size=16g
+size=2g
 group_reporting
 thread
-filename=/ferrari/fio-test-file
+filename=/mnt/data/fio-test-file
 
 [sequential-fill]
 description=Sequential fill phase

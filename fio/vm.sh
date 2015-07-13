@@ -34,8 +34,8 @@ fi
 # start the VM & bind port 2222 on the host to port 22 in the VM
 # TODO use fancy virtio
 sudo kvm -net nic -net user -hda $IMG -hdb $LIBDIR/seed.img \
-    -drive file=/dev/mapper/FlashSystem_840,if=virtio,cache=none,aio=native \
-    -m 1G -smp 1 -nographic -redir :2222::22
+    -drive file=/dev/nvme0n1,if=virtio,cache=none,aio=native \
+    -m 1G -smp 1 -nographic -redir :2222::22 >$IMG.log &
 
 # remove the overlay (qemu will keep it open as needed)
 sleep 2
@@ -44,7 +44,7 @@ sleep 2
 ssh $SSHOPTS spyre@localhost sudo apt-get install -y fio
 
 # mount ${MNT_DIR} inside the VM
-echo ssh $SSHOPTS spyre@localhost "sudo sh -c 'mkdir "${MNT_DIR}" ; \
+ssh $SSHOPTS spyre@localhost "sudo sh -c 'mkdir "${MNT_DIR}" ; \
                                           mount /dev/vda "${MNT_DIR}" ; \
                                           chmod -R ugo+rwx "${MNT_DIR}"'"
 
