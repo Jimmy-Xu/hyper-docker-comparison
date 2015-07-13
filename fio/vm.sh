@@ -44,7 +44,7 @@ sleep 2
 ssh $SSHOPTS spyre@localhost sudo apt-get install -y fio
 
 # mount ${MNT_DIR} inside the VM
-ssh $SSHOPTS spyre@localhost "sudo sh -c 'mkdir "${MNT_DIR}" ; \
+ssh $SSHOPTS spyre@localhost "sudo sh -c 'mkdir -p "${MNT_DIR}" ; \
                                           mount /dev/vda "${MNT_DIR}" ; \
                                           chmod -R ugo+rwx "${MNT_DIR}"'"
 
